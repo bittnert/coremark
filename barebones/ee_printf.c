@@ -659,10 +659,22 @@ ee_vsprintf(char *buf, const char *fmt, va_list args)
     return str - buf;
 }
 
+#define UART_BASE_ADDR 0x02000000
+#define UART_STATUS_OFFSET 0x0
+#define UART_TX_OFFSET 0x1
+#define UART_STATUS_REG *(volatile ee_u32*)(UART_BASE_ADDR + UART_STATUS_OFFSET)
+#define UART_TX_REG *(volatile ee_u8*)(UART_BASE_ADDR + UART_TX_OFFSET)
+#define UART_TX_FULL(status) ((status & (1 << 31))!= 0)
 void
 uart_send_char(char c)
 {
-#error "You must implement the method uart_send_char to use this file!\n";
+    ee_u32 status = UART_STATUS_REG;
+    while (UART_TX_FULL(status)) {
+        status = UART_STATUS_REG;
+    }
+
+    UART_TX_REG = c;
+//#error "You must implement the method uart_send_char to use this file!\n";
     /*	Output of a char to a UART usually follows the following model:
             Wait until UART is ready
             Write char to UART

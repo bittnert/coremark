@@ -45,6 +45,7 @@ $(error PLEASE define PORT_DIR! (e.g. make PORT_DIR=simple))
 endif
 vpath %.c $(PORT_DIR)
 vpath %.h $(PORT_DIR)
+vpath %.c ../utils
 vpath %.mak $(PORT_DIR)
 include $(PORT_DIR)/core_portme.mak
 
@@ -79,11 +80,13 @@ $(OPATH)$(PORT_DIR):
 
 compile: $(OPATH) $(OPATH)$(PORT_DIR) $(OBJS) $(HEADERS) 
 link: compile 
+	echo $(OBJS)
 	$(LD) $(LFLAGS) $(XLFLAGS) $(OBJS) $(LOUTCMD)
 	
 else
 
 compile: $(OPATH) $(SRCS) $(HEADERS) 
+	echo ${pwd}
 	$(CC) $(CFLAGS) $(XCFLAGS) $(SRCS) $(OUTCMD)
 link: compile 
 	@echo "Link performed along with compile"

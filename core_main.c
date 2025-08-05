@@ -125,12 +125,14 @@ main(int argc, char *argv[])
 #endif
     /* first call any initializations needed */
     portable_init(&(results[0].port), &argc, argv);
+    ee_printf("Coremark benchmark started\n");
     /* First some checks to make sure benchmark will run ok */
     if (sizeof(struct list_head_s) > 128)
     {
         ee_printf("list_head structure too big for comparable data!\n");
         return MAIN_RETURN_VAL;
     }
+
     results[0].seed1      = get_seed(1);
     results[0].seed2      = get_seed(2);
     results[0].seed3      = get_seed(3);
@@ -244,6 +246,7 @@ for (i = 0; i < MULTITHREAD; i++)
         secs_ret secs_passed = 0;
         ee_u32   divisor;
         results[0].iterations = 1;
+        ee_printf("Estimating iterations...\n");
         while (secs_passed < (secs_ret)1)
         {
             results[0].iterations *= 10;
@@ -260,6 +263,9 @@ for (i = 0; i < MULTITHREAD; i++)
                              least one second passed */
             divisor = 1;
         results[0].iterations *= 1 + 10 / divisor;
+    }
+    else {
+        ee_printf("Running %u iterations\n", results[0].iterations);
     }
     /* perform actual benchmark */
     start_time();
